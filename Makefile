@@ -1,4 +1,4 @@
-CFLAGS= -Wall -std=c99 -ansi -pedantic -O2
+CFLAGS= -Wall -std=c99 -ansi -pedantic -O2 -lreadline
 CC= gcc
 
 ep1sh: ep1sh.c
