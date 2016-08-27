@@ -2,6 +2,9 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/wait.h>
+# include <unistd.h>
+# include <sys/syscall.h>
+# include <errno.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -13,7 +16,7 @@ char *argument[5];
 
 
 void type_prompt ();
-int splitter (char line[], char *dic[]);
+int splitter (char line[], char *argumento[]);
 
 void type_prompt () {
     int n;
@@ -36,12 +39,12 @@ void type_prompt () {
 
 }
 
-int splitter (char line[], char *dic[]) {
+int splitter (char line[], char *argumento[]) {
     char *token;
     int n = 0;
     token = strtok (line, " ");
     while (token != NULL) {
-        dic[n++] = token;
+        argumento[n++] = token;
         token = strtok (NULL, " ");
     }
     return n;
@@ -49,7 +52,7 @@ int splitter (char line[], char *dic[]) {
 
 int main (int argc, char * argv[]) {
 
-    int e, pid;
+    int e, pid, rc;
 
     while(1) {
         type_prompt ();
@@ -57,8 +60,18 @@ int main (int argc, char * argv[]) {
             wait(0);
         }
         else {
-            e = execve(command, argument, NULL);
-            printf("%d\n", e);
+            if (strcmp (command, "id") == 0) {
+                rc = syscall(SYS_getuid, argument[1]);
+                if (rc == -1)
+                    fprintf(stderr, "id failed, errno = %d\n", errno);
+            } else if (strcmp (command, "chmod") == 0) {
+                rc = syscall(SYS_chmod, argument[2], atoi (argument[1]));
+                if (rc == -1)
+                    fprintf(stderr, "chmod failed, errno = %d\n", errno);
+            } else {
+                e = execve(command, argument, NULL);
+                printf("%d\n", e);
+            }
         }
 
     }
