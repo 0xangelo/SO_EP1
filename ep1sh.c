@@ -12,7 +12,7 @@
 
 static char *line = (char *) NULL;
 char *command;
-char *argument[5];
+char *argument[6];
 
 
 void type_prompt ();
