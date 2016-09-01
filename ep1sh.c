@@ -14,7 +14,7 @@ static char *line = (char *) NULL;
 char *command;
 char *argument[6];
 
-
+int syscall();
 void type_prompt ();
 int splitter (char line[], char *argumento[]);
 
@@ -52,7 +52,7 @@ int splitter (char line[], char *argumento[]) {
 
 int main (int argc, char * argv[]) {
 
-    int e, pid, rc;
+  int e, pid, rc, tid;
 
     while(1) {
         type_prompt ();
@@ -61,9 +61,8 @@ int main (int argc, char * argv[]) {
         }
         else {
             if (strcmp (command, "id") == 0) {
-                rc = syscall(SYS_getuid, argument[1]);
-                if (rc == -1)
-                    fprintf(stderr, "id failed, errno = %d\n", errno);
+                tid = syscall(SYS_getuid);
+                printf ("%d\n", tid);
             } else if (strcmp (command, "chmod") == 0) {
                 rc = syscall(SYS_chmod, argument[2], atoi (argument[1]));
                 if (rc == -1)
