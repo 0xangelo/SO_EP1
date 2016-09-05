@@ -53,6 +53,7 @@ void FCFS () {
     int i = 0;
 	clock_t begin, end, ops;
     double tf;
+    double c;
 	pthread_t *procs;
 
 	procs = malloc (sizeof (pthread_t) * size);
@@ -60,7 +61,8 @@ void FCFS () {
 
 	while (i < size) {
             ops = (clock () - begin) / CLOCKS_PER_SEC;
-            if (ops >= listaproc[i].t0) {
+            c = (double) ops;
+            if (c >= listaproc[i].t0) {
                 if (d) fprintf (stderr, "%3d: Linha de Trace: %f %s %f %f\n", currenti, listaproc[i].t0, listaproc[i].nome, listaproc[i].dt, listaproc[i].deadline);
                 pthread_create (&procs[i], NULL, lostimeFCFS, &listaproc[i].dt);
                 pthread_join(procs[i], NULL);
@@ -84,8 +86,11 @@ void* lostimeFCFS (void *voidtime) {
     double *time = (double *)voidtime;
     clock_t begin = clock ();
     cpu = sched_getcpu ();
+    printf ("%f", *time);
     if (d) fprintf (stderr, "%3d: Processo %s começou a usar CPU %d\n", currenti, listaproc[currenti].nome, cpu);
-	while (((clock () - begin)/CLOCKS_PER_SEC) < *time) {}
+
+	while (((double) (clock () - begin)/CLOCKS_PER_SEC) < *time) {}
+
     if (d) fprintf (stderr, "%3d: Processo %s terminou de usar CPU %d\n", currenti, listaproc[currenti].nome, cpu);
     return NULL;
 }

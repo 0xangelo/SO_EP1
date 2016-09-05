@@ -1,0 +1,4 @@
+  0 processo0   0.75  11
+  0 processo1   0.75  20
+  0 processo2   0.75   9
+  0 processo3   0.75  46
