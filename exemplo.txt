@@ -1,4 +1,4 @@
-  0 processo0   1.5  11
-  1 processo1   1.5  20
+  0 processo0   6.0  11
+  0 processo1   0.5  20
   2 processo2   1.5   9
   4 processo3   1.5  46
