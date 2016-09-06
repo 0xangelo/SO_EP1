@@ -48,6 +48,22 @@ void errsaida (char *nome, double final, double relogio, int i) {
         fprintf(stderr, "Número de mudanças de Contexto: 0\n");
 }
 
+void* arrival (void *time) {
+    int i = 0;
+    double *start = (double*)time;
+    double ops;
+
+    while (i < size) {
+        ops = (double) ((clock () - *start) / CLOCKS_PER_SEC);
+        if (ops >= listaproc[i].t0) {
+            fprintf (stderr, "** Inicio  %s: %f %s %f %f **\n", listaproc[i].nome, listaproc[i].t0, listaproc[i].nome, listaproc[i].dt, listaproc[i].deadline);
+            i++;
+        }
+    }
+
+    return NULL;
+}
+
 
 void FCFS () {
     int i = 0;
@@ -55,20 +71,24 @@ void FCFS () {
     double tf;
     double c;
 	pthread_t *procs;
+    pthread_t time;
+
+
 
 	procs = malloc (sizeof (pthread_t) * size);
     begin = clock ();
+
+    if (d) pthread_create (&time, NULL, arrival, &begin);
 
 	while (i < size) {
             ops = (clock () - begin) / CLOCKS_PER_SEC;
             c = (double) ops;
             if (c >= listaproc[i].t0) {
-                if (d) fprintf (stderr, "%3d: Linha de Trace: %f %s %f %f\n", currenti, listaproc[i].t0, listaproc[i].nome, listaproc[i].dt, listaproc[i].deadline);
                 pthread_create (&procs[i], NULL, lostimeFCFS, &listaproc[i].dt);
                 pthread_join(procs[i], NULL);
                 end = clock ();
                 tf = (double) (end - begin)/CLOCKS_PER_SEC;
-               if (d) fprintf (stderr, "%3d: Linha de Saida: %s %f %f\n", currenti, listaproc[i].nome, tf, tf - listaproc[i].t0);
+                if (d) fprintf (stderr, "Fim do %dº Processo: %s %f %f\n", currenti+1, listaproc[i].nome, tf, tf - listaproc[i].t0);
                 fprintf(out, "%s %f %f\n", listaproc[i].nome, tf, tf - listaproc[i].t0);
 
                 i++;
@@ -77,8 +97,9 @@ void FCFS () {
             else continue;
             
 	}
+  
     fprintf(out, "0\n");
-    if (d) fprintf (stderr, "%3d: Número de mudanças de Contexto: 0\n", currenti-1);
+    if (d) fprintf (stderr, "Terminado. Número de mudanças de Contexto: 0\n");
 	    
 }
 
@@ -86,12 +107,11 @@ void* lostimeFCFS (void *voidtime) {
     double *time = (double *)voidtime;
     clock_t begin = clock ();
     cpu = sched_getcpu ();
-    printf ("%f", *time);
-    if (d) fprintf (stderr, "%3d: Processo %s começou a usar CPU %d\n", currenti, listaproc[currenti].nome, cpu);
+    if (d) fprintf (stderr, "  %s começou a usar CPU %d\n", listaproc[currenti].nome, cpu);
 
 	while (((double) (clock () - begin)/CLOCKS_PER_SEC) < *time) {}
 
-    if (d) fprintf (stderr, "%3d: Processo %s terminou de usar CPU %d\n", currenti, listaproc[currenti].nome, cpu);
+    if (d) fprintf (stderr, "     %s terminou de usar CPU %d\n", listaproc[currenti].nome, cpu);
     return NULL;
 }
 
