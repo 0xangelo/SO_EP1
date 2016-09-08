@@ -1,8 +1,0 @@
-  0 processo0   0.2  11
-  0 processo1   0.2   20
-  0 processo2   0.2   9
-  0 processo3   0.2   46
-  0 processo4   0.2   123
-  0 processo5   0.4   12
-  4 processo6   0.4   12
-  4 processo7   0.4   12

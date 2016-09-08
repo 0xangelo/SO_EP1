@@ -57,7 +57,7 @@ void SRTN () {
     clock_t begin, end;
     double tf;
     pthread_t run, time;
-    QUANTUM = 0.2;
+    QUANTUM = 0.1;
     begin = clock ();
 
     if (d) pthread_create (&time, NULL, arrival, &begin);
@@ -93,7 +93,7 @@ void SRTN () {
                 pthread_create (&run, NULL, lostime, &QUANTUM);
                 pthread_join (run, NULL);
             }
-            QUANTUM = 0.2;
+            QUANTUM = 0.1;
 
             listaproc[currenti].dt = listaproc[currenti].dt - QUANTUM;
 
@@ -175,6 +175,12 @@ void MULTIPLAS_FILAS () {
     fprintf(out, "Mudanças de Contexto: %d\n", contexto);
     if (d) fprintf (stderr, "Terminado. Número de mudanças de Contexto: %d\n", contexto);
 
+    free (p);
+    free (u);
+    for (i = 0; i < 5; i++)
+        free (filas[i]);
+    free (filas);
+
 }
 
 void * arrivalM (void *time) {
@@ -195,7 +201,6 @@ void * arrivalM (void *time) {
 }
 
 int tem_alguem (int p, int u) {
-    
     return u - p;
 }
 
@@ -223,6 +228,10 @@ int main (int argc, char **argv) {
             MULTIPLAS_FILAS ();
             break;
     }
+    fclose (in);
+    fclose (out);
+    free (listaproc);
+
     return 0;
 }
 
@@ -278,6 +287,7 @@ void FCFS () {
   
     fprintf(out, "Mudanças de Contexto: 0\n");
     if (d) fprintf (stderr, "Terminado. Número de mudanças de Contexto: 0\n");
+    free (procs);
         
 }
 
