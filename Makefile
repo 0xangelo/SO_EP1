@@ -1,9 +1,6 @@
 CFLAGS= -Wall -std=c99 -ansi -pedantic -O2 -lreadline -lpthread
 CC= gcc
 
-ep1: ep1.c
-	${CC} -o $@ $^ ${CFLAGS}
-
 ep1sh: ep1sh.c
 	${CC} -o $@ $^ ${CFLAGS}
 
@@ -15,3 +12,6 @@ run: ep1sh
 
 update: clean
 	git add * 
+	
+ep1: ep1.c ep1.h FCFS.c FCFS.h SRTN.c SRTN.h MULT.c MULT.h
+	${CC} -o $@ $^ ${CFLAGS}
